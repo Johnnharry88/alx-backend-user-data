@@ -48,14 +48,14 @@ def get_logger() -> logging.Logger:
     logger.setLevel(logging.INFO)
     logger.propagate = False
     streamer = logging.StreamHandler()
-    streamer.setFormatter(RedactingFormatter(PII_FILES))
+    streamer.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(streamer)
     return logger
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Connects to our database"""
-    user = getenv('PERSONAL_DATA_DB_USERNAME') or 'root'
+    user = getenv('PERSONAL_DATA_DB_USERNAME')
     pasdkey = getenv('PERSONAL_DATA_DB_PASSWORD') or ""
     host = getenv('PERSONAL_DATA_DB_HOST')
     db = getenv('PERSONAL_DATA_DB_NAME')
@@ -66,3 +66,20 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         database=db,
         )
     return connect
+
+def main():
+    """Reads from Database"""
+    db = get_db()
+    logger = get_logger()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users;')
+    fields = cursor.column_names
+    for r in cursor:
+        msg = "".join('{}={}; '.format(x, y) for x, y in zip(fields, r))
+        logger.info(msg.strip())
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
