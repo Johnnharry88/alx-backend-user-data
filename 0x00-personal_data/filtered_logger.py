@@ -67,6 +67,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         )
     return connect
 
+
 def main():
     """Reads from Database"""
     db = get_db()
