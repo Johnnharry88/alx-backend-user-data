@@ -26,7 +26,6 @@ class Auth:
                         return False
         return True
 
-
     def authorization_header(self, request=None) -> str:
         """Returns the authorization header from request object"""
         if request is None:
@@ -35,7 +34,6 @@ class Auth:
         if hd is None:
             return None
         return hd
-
 
     def current_user(self, request=None) -> TypeVar('User'):
         """Returns a User instance using info form request"""
