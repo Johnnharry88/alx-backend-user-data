@@ -30,3 +30,9 @@ def stats() -> str:
 def authorized() -> str:
     """GGET api unauthorised"""
     abort(401, description="Unauthorized")
+
+
+@app_views.route('/forbidden', methods=["GET"], strict_slashes=False)
+def forbidden() -> str:
+    """Return response for GET forbidden access"""
+    abort(403, description="Forbidden")
