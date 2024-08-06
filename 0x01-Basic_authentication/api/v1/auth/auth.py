@@ -16,7 +16,7 @@ class Auth:
             return True
         else:
             for y in excluded_paths:
-                if fnmatch.fnmatch(path, excluded_path):
+                if fnmatch.fnmatch(path, y):
                     return False
         return True
 
