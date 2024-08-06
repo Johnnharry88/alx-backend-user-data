@@ -4,6 +4,7 @@ import base64
 from .auth import Auth
 from typing import TypeVar, Tuple
 import re
+import binascii
 
 from models.user import User
 
@@ -19,10 +20,11 @@ class BasicAuth(Auth):
             return None
         if not isinstance(authorization_header, str):
             return None
-        if not authorization_header.startswith("Basic "):
+        patter = r'Basic (?P<token>.+)'
+        match_x = re.fullmatch(patter, authorization_header.strip())
+        if match_x is None:
             return None
-        paswd = authorization_header.split(" ")[-1]
-        return None
+        return match_x.group('token')
 
     def decode_base64_authorization_header(
             self,

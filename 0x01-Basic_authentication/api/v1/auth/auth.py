@@ -2,6 +2,7 @@
 """Module that holds Class describing Authontication"""
 from flask import request
 from typing import List, TypeVar
+import fnmatch
 
 
 class Auth:
@@ -11,19 +12,12 @@ class Auth:
         """
         if path is None:
             return True
-        elif excluded_paths is None or excluded_paths == []:
+        elif excluded_paths is None or not excluded_paths:
             return True
-        elif path in excluded_paths:
-            return False
         else:
             for y in excluded_paths:
-                if y.startswith(path):
+                if fnmatch.fnmatch(path, excluded_path):
                     return False
-                if path.startswith(y):
-                    return False
-                if y[-1] == "*":
-                    if path.startswith(y[:-1]):
-                        return False
         return True
 
     def authorization_header(self, request=None) -> str:
