@@ -78,7 +78,13 @@ class BasicAuth(Auth):
     def current_user(self, request=None) -> TypeVar('User'):
         """Retrieves the user froma reuest"""
         auth_hd = self.authorization_header(request)
-        b64_token = self.extract_base64_authorization_header(auth_hd)
-        auth_tok = self.decode_base64_authorization_header(b64_token)
-        emai, password = self.extract_user_credentials(auth_tok)
-        return self.user_object_from_credentials(email, password)
+        if auth_hd is not None:
+            auth_tok = self.extract_base64_authorization_header(auth_hd)
+            if auth_tok is not None:
+                decipher = self.decode_base64_authorization_header(auth_tok)
+                if decipher is not None:
+                    email, passowrd = self.extract_user_credentials(decipher)
+                    if email is not None:
+                        return self.user_object_from_credentials(
+                            email, password)
+        return
