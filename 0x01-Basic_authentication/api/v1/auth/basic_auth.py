@@ -2,12 +2,13 @@
 """Module of BAsic Authentication for users"""
 import base64
 from .auth import Auth
-from typing import TypeVar
+from typing import TypeVar, Tuple
+import re
 
 from models.user import User
 
 
-class BasicAuth(auth):
+class BasicAuth(Auth):
     """Implementation of Basic Authoirzation metod"""
     def extract_base64_authorization_header(
             self,
@@ -40,17 +41,22 @@ class BasicAuth(auth):
 
     def extract_user_credentials(
             self,
-            decoded_base64_authorization_header: str) -> str:
+            decoded_base64_authorization_header: str) -> Tuple[str, str]:
         """ Returns user credential form base64-decoded val"""
         if decoded_base64_authorization_header is None:
             return(None, None)
         if not isinstance(decode_base64_authorization_header, str):
             return (None, None)
-        if ':' not in decoded_base64_authorization_header.split(':')[0]:
-            return (None, None)
-        email = decode_base64_authorization_header.split(':')[0]
-        password = decoded_base64_authorization_header[len(email) + 1:]
-        return (email, password)
+        patter = r'(?P<user>[^:]+):(P<password>.+)'
+        match_x = re.fullmatch(
+            patter,
+            decoded_base64_authorization_header.strip(),
+        )
+        if match_x is None:
+            return None, None
+        email = match_x.group('user')
+        password = match_x.group('password')
+        return email, password
 
     def user_object_from_credentials(
             self,
