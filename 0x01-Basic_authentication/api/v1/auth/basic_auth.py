@@ -36,8 +36,7 @@ class BasicAuth(Auth):
             return None
         try:
             alx = base64.b64decode(
-                base64_authorization_header,
-                validate=True,
+                base64_authorization_header.encode('utf-8'),
             )
             return alx.decode('utf-8')
         except (binascii.Error, UnicodeDecodeError):
@@ -49,18 +48,12 @@ class BasicAuth(Auth):
         """ Returns user credential form base64-decoded val"""
         if decoded_base64_authorization_header is None:
             return(None, None)
-        if not isinstance(decode_base64_authorization_header, str):
+        if not isinstance(decoded_base64_authorization_header, str):
             return (None, None)
-        patter = r'(?P<user>[^:]+):(P<password>.+)'
-        match_x = re.fullmatch(
-            patter,
-            decoded_base64_authorization_header.strip(),
-        )
-        if match_x is None:
-            return None, None
-        email = match_x.group('user')
-        password = match_x.group('password')
-        return email, password
+        if ':' not in decoded_base64_authorization_header:
+            return (None, None)
+        email, password = decoded_base64_authorization_header.split(':')
+        return (email, password)
 
     def user_object_from_credentials(
             self,
