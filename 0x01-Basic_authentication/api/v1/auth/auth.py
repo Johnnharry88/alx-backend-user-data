@@ -12,7 +12,7 @@ class Auth:
         """
         if path is None:
             return True
-        elif excluded_paths is None or not excluded_paths:
+        elif excluded_paths is None or excluded_paths == []:
             return True
         else:
             for y in excluded_paths:
