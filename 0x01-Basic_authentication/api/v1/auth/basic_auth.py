@@ -60,17 +60,18 @@ class BasicAuth(Auth):
             user_email: str,
             user_pwd: str) -> TypeVar('User'):
         """Retrieves a user based on  ther user's authentiation"""
-        if user_email is None or not isinstance (user_email, str):
+        if user_email is None or not isinstance(user_email, str):
             return None
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
         try:
-            user = Users.search({'email': user_email})
+            user = User.search({'email': user_email})
             if not user or user == []:
                 return None
             for u in user:
                 if u.is_valid_password(user_pwd):
                     return u
+            return None
         except Exception:
             return None
 
