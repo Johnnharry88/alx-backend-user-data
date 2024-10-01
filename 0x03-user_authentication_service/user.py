@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class User(Base):
-    """func doc"""
+    """class that defines schema for User"""
 
     __tablename__ = "users"
 
