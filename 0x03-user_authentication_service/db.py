@@ -40,10 +40,9 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """FInds user by input arguments"""
-        try:
-            finduser = self._session.query(User).filter_by(**kwargs).one()
-        except NoResultFound:
-            raise
-        except InvalidRequestError:
-            raise
+        if not kwargs:
+            raise InvalidRequestError
+        finduser = self._session.query(User).filter_by(**kwargs).first()
+        if not finduser:
+            raise NoResultFound
         return finduser
